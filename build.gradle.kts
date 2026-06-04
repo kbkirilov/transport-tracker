@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "4.0.6"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("com.diffplug.spotless") version "8.6.0"
 }
 
 group = "com.kiril"
@@ -14,7 +15,17 @@ java {
 	}
 }
 
+spotless {
+	java {
+		googleJavaFormat()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
+
 repositories {
+	gradlePluginPortal()
 	mavenCentral()
 }
 
@@ -26,4 +37,8 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.named("compileJava") {
+	dependsOn("spotlessApply")
 }
