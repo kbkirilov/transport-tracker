@@ -13,11 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build JAR with Gradle
-      - run: ./gradlew bootJar
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Login to GHCR
         run: echo "${{ secrets.GHCR_SECRET }}" | docker login ghcr.oi -u ${{ github.actor }} --password-stdin
