@@ -13,26 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: 17
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+      - name: Build Java Project
+        run: ./gradlew build
 
-      - name: Build JAR with Gradle
-        run: ./gradlew bootJar
+      - name: Login to GHCR
+        run: echo "${{ secrets.GHCR_SECRET }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build docker image and tag it
+        run: docker build . --tag ghcr.io/${{ github.repository }}:latest
 
-      - name: Build image
-        run: docker build -t ghcr.io/${{ github.repository_owner }}/transport-tracker:latest .
-
-      - name: Push image
-        run: docker push ghcr.io/${{ github.repository_owner }}/transport-tracker:latest
+      - name: Push image to GHCR
+        run: docker push ghcr.io/${{ github.repository }}:latest
