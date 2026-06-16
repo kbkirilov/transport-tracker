@@ -1,7 +1,7 @@
 package com.kiril.transporttracker.gtfs;
 
+import com.kiril.transporttracker.publishers.VehicleUpdatePublisher;
 import com.kiril.transporttracker.vehicle.Vehicle;
-import com.kiril.transporttracker.web.VehicleUpdatePublisher;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

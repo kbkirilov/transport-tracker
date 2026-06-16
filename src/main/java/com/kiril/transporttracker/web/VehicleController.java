@@ -1,7 +1,7 @@
-package com.kiril.transporttracker.web.controller;
+package com.kiril.transporttracker.web;
 
 import com.kiril.transporttracker.gtfs.GtfsPollingService;
-import com.kiril.transporttracker.web.VehicleUpdatePublisher;
+import com.kiril.transporttracker.publishers.VehicleUpdatePublisher;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;

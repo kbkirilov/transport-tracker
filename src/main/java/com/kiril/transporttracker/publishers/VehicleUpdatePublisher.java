@@ -1,4 +1,4 @@
-package com.kiril.transporttracker.web;
+package com.kiril.transporttracker.publishers;
 
 import com.kiril.transporttracker.vehicle.Vehicle;
 import java.util.List;

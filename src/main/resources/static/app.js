@@ -6,11 +6,6 @@ stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
 
-    // greetings topic (existing)
-    stompClient.subscribe('/topic/greetings', (greeting) => {
-        showGreeting(JSON.parse(greeting.body).content);
-    });
-
     // vehicles topic (new)
     stompClient.subscribe('/topic/vehicles', (message) => {
         const vehicles = JSON.parse(message.body);
@@ -74,10 +69,6 @@ function showVehicles(vehicles) {
             </tr>
         `);
     });
-}
-
-function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
 }
 
 $(function () {
