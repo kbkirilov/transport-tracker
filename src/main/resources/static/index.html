@@ -19,6 +19,9 @@
                 <div class="form-group">
                     <label for="connect">WebSocket connection:</label>
                     <button id="connect" class="btn btn-default" type="submit">Connect</button>
+                    <button id="getVehicles" class="btn btn-primary" disabled="disabled">
+                        Get Vehicles
+                    </button>
                     <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
                     </button>
                 </div>
@@ -44,6 +47,23 @@
                 </thead>
                 <tbody id="greetings">
                 </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- 👇 NEW VEHICLES TABLE -->
+    <div class="row">
+        <div class="col-md-12">
+            <table id="vehicleTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Vehicle ID</th>
+                    <th>Route ID</th>
+                    <th>Trip ID</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+                </thead>
+                <tbody id="vehicles"></tbody>
             </table>
         </div>
     </div>

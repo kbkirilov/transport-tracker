@@ -5,30 +5,41 @@ const stompClient = new StompJs.Client({
 stompClient.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
+
+    // greetings topic (existing)
     stompClient.subscribe('/topic/greetings', (greeting) => {
         showGreeting(JSON.parse(greeting.body).content);
+    });
+
+    // vehicles topic (new)
+    stompClient.subscribe('/topic/vehicles', (message) => {
+        const vehicles = JSON.parse(message.body);
+        showVehicles(vehicles);
     });
 };
 
 stompClient.onWebSocketError = (error) => {
-    console.error('Error with websocket', error);
+    console.error('WebSocket error', error);
 };
 
 stompClient.onStompError = (frame) => {
-    console.error('Broker reported error: ' + frame.headers['message']);
-    console.error('Additional details: ' + frame.body);
+    console.error('Broker error: ' + frame.headers['message']);
+    console.error('Details: ' + frame.body);
 };
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
+
+    $("#getVehicles").prop("disabled", !connected);
+
     if (connected) {
         $("#conversation").show();
-    }
-    else {
+    } else {
         $("#conversation").hide();
     }
-    $("#greetings").html("");
+
+    $("#vehicles").html("");
 }
 
 function connect() {
@@ -41,10 +52,27 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
+// 👇 this triggers server-side streaming
+function getVehicles() {
     stompClient.publish({
-        destination: "/app/hello",
-        body: JSON.stringify({'name': $("#name").val()})
+        destination: "/app/vehicles/request",
+        body: ""
+    });
+}
+
+function showVehicles(vehicles) {
+    $("#vehicles").html(""); // clear table
+
+    vehicles.forEach(v => {
+        $("#vehicles").append(`
+            <tr>
+                <td>${v.vehicleId ?? ''}</td>
+                <td>${v.routeId ?? ''}</td>
+                <td>${v.tripId ?? ''}</td>
+                <td>${v.latitude ?? ''}</td>
+                <td>${v.longitude ?? ''}</td>
+            </tr>
+        `);
     });
 }
 
@@ -54,7 +82,8 @@ function showGreeting(message) {
 
 $(function () {
     $("form").on('submit', (e) => e.preventDefault());
-    $( "#connect" ).click(() => connect());
-    $( "#disconnect" ).click(() => disconnect());
-    $( "#send" ).click(() => sendName());
+
+    $("#connect").click(connect);
+    $("#disconnect").click(disconnect);
+    $("#getVehicles").click(getVehicles);
 });

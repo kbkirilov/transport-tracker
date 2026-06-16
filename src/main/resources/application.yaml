@@ -1,3 +1,7 @@
 spring:
   application:
     name: transport-tracker
+
+transport:
+  scheduler:
+    polling-rate: 1000
