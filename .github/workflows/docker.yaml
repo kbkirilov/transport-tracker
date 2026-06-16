@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Login to GHCR
-        run: echo "${{ secrets.GHCR_SECRET }}" | docker login ghcr.oi -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_SECRET }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build docker image and tag it
         run: docker build . --tag ghcr.io/${{ github.repository }}:latest
