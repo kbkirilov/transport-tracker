@@ -1,4 +1,4 @@
-package com.kiril.transporttracker.gtfs;
+package com.kiril.transporttracker.gtfs.parsers;
 
 import com.kiril.transporttracker.models.Routes;
 import java.io.BufferedReader;
