@@ -3,7 +3,7 @@ package com.kiril.transporttracker.models;
 import lombok.Builder;
 
 @Builder
-public record Routes(
+public record Route(
     String routeId,
     String agencyId,
     String routeShortName,

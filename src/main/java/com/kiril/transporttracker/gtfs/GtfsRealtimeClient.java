@@ -1,7 +1,7 @@
 package com.kiril.transporttracker.gtfs;
 
 import com.google.transit.realtime.GtfsRealtime;
-import com.kiril.transporttracker.vehicle.Vehicle;
+import com.kiril.transporttracker.vehicle.RawVehicle;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,7 +16,7 @@ public class GtfsRealtimeClient {
   private static final String VEHICLE_POSITIONS_URL =
       "https://gtfs.sofiatraffic.bg/api/v1/vehicle-positions";
 
-  public List<Vehicle> getVehicles() throws Exception {
+  public List<RawVehicle> getVehicles() throws Exception {
     HttpRequest request =
         HttpRequest.newBuilder().uri(URI.create(VEHICLE_POSITIONS_URL)).GET().build();
 
@@ -28,8 +28,8 @@ public class GtfsRealtimeClient {
     return getVehicles(feed);
   }
 
-  private static List<Vehicle> getVehicles(GtfsRealtime.FeedMessage feed) {
-    List<Vehicle> result = new ArrayList<>();
+  private static List<RawVehicle> getVehicles(GtfsRealtime.FeedMessage feed) {
+    List<RawVehicle> result = new ArrayList<>();
     int index = 0;
 
     for (GtfsRealtime.FeedEntity entity : feed.getEntityList()) {
@@ -49,10 +49,11 @@ public class GtfsRealtimeClient {
       }
 
       result.add(
-          new Vehicle(
+          new RawVehicle(
               vp.getVehicle().getId(),
               vp.getTrip().getRouteId(),
               vp.getTrip().getTripId(),
+              vp.getStopId(),
               vp.getPosition().getLatitude(),
               vp.getPosition().getLongitude(),
               vp.getTimestamp()));
