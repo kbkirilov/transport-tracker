@@ -61,9 +61,11 @@ function showVehicles(vehicles) {
     vehicles.forEach(v => {
         $("#vehicles").append(`
             <tr>
-                <td>${v.vehicleId ?? ''}</td>
-                <td>${v.routeId ?? ''}</td>
+                <td>${v.line ?? ''}</td>
+                <td>${v.routeShortName ?? ''}</td>
+                <td>${v.routeLongName ?? ''}</td>
                 <td>${v.tripId ?? ''}</td>
+                <td>${v.stopName ?? ''}</td>
                 <td>${v.latitude ?? ''}</td>
                 <td>${v.longitude ?? ''}</td>
             </tr>

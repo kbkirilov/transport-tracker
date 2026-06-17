@@ -1,0 +1,79 @@
+package com.kiril.transporttracker.gtfs.parsers;
+
+import static com.kiril.transporttracker.gtfs.GtfsStaticFileDownloader.GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH;
+
+import com.kiril.transporttracker.models.Route;
+import com.kiril.transporttracker.models.Stop;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+@Service
+public class GtfsParser {
+
+  public static final String CACHE_NAME_ROUTES = "routes_cache";
+  public static final String CACHE_NAME_STOPS = "stops_cache";
+
+  // TODO Add the below path in application.yaml configuration
+  // TODO How about if the routes files is old or have not yet been downloaded?
+  public static String ROUTES_TXT_FILE_PATH = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\routes.txt";
+  public static String STOPS_TXT_FILE_PATH = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\stops.txt";
+
+  @Cacheable(value = CACHE_NAME_ROUTES)
+  public List<Route> getRoutes() {
+    List<String[]> routesParts = splitFile(ROUTES_TXT_FILE_PATH);
+
+    return routesParts.stream()
+        .map(parts -> new Route(parts[0], parts[1], parts[2], parts[3], parts[5]))
+        .collect(Collectors.toList());
+  }
+
+  @Cacheable(value = CACHE_NAME_STOPS)
+  public List<Stop> getStopsFromFile() {
+    List<String[]> stopParts = splitFile(STOPS_TXT_FILE_PATH);
+
+    List<Stop> stops =
+        stopParts.stream()
+            .map(
+                parts ->
+                    new Stop(
+                        parts[0],
+                        parts[1],
+                        parts[2],
+                        !parts[4].isEmpty() ? Double.parseDouble(parts[4]) : 0.00,
+                        !parts[4].isEmpty() ? Double.parseDouble(parts[5]) : 0.00))
+            .collect(Collectors.toList());
+
+    return stops;
+  }
+
+  private List<String[]> splitFile(String textFilePath) {
+    List<String[]> result = new ArrayList<>();
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(textFilePath))) {
+      String line;
+      boolean isHeader = true;
+
+      while ((line = reader.readLine()) != null) {
+        if (isHeader) {
+          isHeader = false;
+          continue;
+        }
+        String[] parts = line.split(",");
+        result.add(parts);
+      }
+      return result;
+    } catch (IOException e) {
+      // TODO Need to think about proper exception handling
+      throw new RuntimeException();
+    } catch (ArrayIndexOutOfBoundsException e) {
+      // TODO Need to think about proper exception handling
+      throw new IllegalArgumentException();
+    }
+  }
+}
