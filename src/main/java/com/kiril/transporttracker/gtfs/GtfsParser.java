@@ -1,9 +1,10 @@
-package com.kiril.transporttracker.gtfs.parsers;
+package com.kiril.transporttracker.gtfs;
 
 import static com.kiril.transporttracker.gtfs.GtfsStaticFileDownloader.GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH;
 
 import com.kiril.transporttracker.models.Route;
 import com.kiril.transporttracker.models.Stop;
+import com.kiril.transporttracker.models.Trip;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,15 +19,17 @@ public class GtfsParser {
 
   public static final String CACHE_NAME_ROUTES = "routes_cache";
   public static final String CACHE_NAME_STOPS = "stops_cache";
+  public static final String CACHE_NAME_TRIPS = "trips_cache";
 
   // TODO Add the below path in application.yaml configuration
   // TODO How about if the routes files is old or have not yet been downloaded?
-  public static String ROUTES_TXT_FILE_PATH = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\routes.txt";
-  public static String STOPS_TXT_FILE_PATH = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\stops.txt";
+  public static String TXT_FILE_PATH_ROUTES = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\routes.txt";
+  public static String TXT_FILE_PATH_STOPS = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\stops.txt";
+  public static String TXT_FILE_PATH_TRIPS = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\trips.txt";
 
   @Cacheable(value = CACHE_NAME_ROUTES)
   public List<Route> getRoutes() {
-    List<String[]> routesParts = splitFile(ROUTES_TXT_FILE_PATH);
+    List<String[]> routesParts = splitFile(TXT_FILE_PATH_ROUTES);
 
     return routesParts.stream()
         .map(parts -> new Route(parts[0], parts[1], parts[2], parts[3], parts[5]))
@@ -34,22 +37,28 @@ public class GtfsParser {
   }
 
   @Cacheable(value = CACHE_NAME_STOPS)
-  public List<Stop> getStopsFromFile() {
-    List<String[]> stopParts = splitFile(STOPS_TXT_FILE_PATH);
+  public List<Stop> getStops() {
+    List<String[]> stopParts = splitFile(TXT_FILE_PATH_STOPS);
 
-    List<Stop> stops =
-        stopParts.stream()
-            .map(
-                parts ->
-                    new Stop(
-                        parts[0],
-                        parts[1],
-                        parts[2],
-                        !parts[4].isEmpty() ? Double.parseDouble(parts[4]) : 0.00,
-                        !parts[4].isEmpty() ? Double.parseDouble(parts[5]) : 0.00))
-            .collect(Collectors.toList());
+    return stopParts.stream()
+        .map(
+            parts ->
+                new Stop(
+                    parts[0],
+                    parts[1],
+                    parts[2],
+                    !parts[4].isEmpty() ? Double.parseDouble(parts[4]) : 0.00,
+                    !parts[4].isEmpty() ? Double.parseDouble(parts[5]) : 0.00))
+        .collect(Collectors.toList());
+  }
 
-    return stops;
+  @Cacheable(value = CACHE_NAME_TRIPS)
+  public List<Trip> getTrips() {
+    List<String[]> tripParts = splitFile(TXT_FILE_PATH_TRIPS);
+
+    return tripParts.stream()
+        .map(parts -> new Trip(parts[0], parts[1], parts[2], parts[3], parts[6]))
+        .collect(Collectors.toList());
   }
 
   private List<String[]> splitFile(String textFilePath) {

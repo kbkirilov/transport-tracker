@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.kiril.transporttracker.models.Route;
 import com.kiril.transporttracker.models.Stop;
+import com.kiril.transporttracker.models.Trip;
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,15 @@ public class CaffeineCacheConfig {
     return Caffeine.newBuilder()
         .expireAfterWrite(Duration.ofMinutes(ttlMinutes))
         .maximumSize(maxSize)
+        .recordStats()
+        .build();
+  }
+
+  @Bean
+  public Cache<String, Trip> tripsCache() {
+    return Caffeine.newBuilder()
+        .expireAfterWrite(Duration.ofMinutes(ttlMinutes))
+        .maximumSize(35000)
         .recordStats()
         .build();
   }

@@ -7,7 +7,7 @@ public record EnrichedVehicle(
     String line,
     String routeShortName,
     String routeLongName,
-    String tripId,
+    String tripShortName,
     String stopName,
     double latitude,
     double longitude,
