@@ -11,23 +11,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GtfsParser {
 
-  public static final String CACHE_NAME_ROUTES = "routes_cache";
-  public static final String CACHE_NAME_STOPS = "stops_cache";
-  public static final String CACHE_NAME_TRIPS = "trips_cache";
-
-  // TODO Add the below path in application.yaml configuration
   // TODO How about if the routes files is old or have not yet been downloaded?
   public static String TXT_FILE_PATH_ROUTES = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\routes.txt";
   public static String TXT_FILE_PATH_STOPS = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\stops.txt";
   public static String TXT_FILE_PATH_TRIPS = GTFS_STATIC_DOWNLOAD_DIRECTORY_PATH + "\\trips.txt";
 
-  @Cacheable(value = CACHE_NAME_ROUTES)
   public List<Route> getRoutes() {
     List<String[]> routesParts = splitFile(TXT_FILE_PATH_ROUTES);
 
@@ -36,7 +29,6 @@ public class GtfsParser {
         .collect(Collectors.toList());
   }
 
-  @Cacheable(value = CACHE_NAME_STOPS)
   public List<Stop> getStops() {
     List<String[]> stopParts = splitFile(TXT_FILE_PATH_STOPS);
 
@@ -52,7 +44,6 @@ public class GtfsParser {
         .collect(Collectors.toList());
   }
 
-  @Cacheable(value = CACHE_NAME_TRIPS)
   public List<Trip> getTrips() {
     List<String[]> tripParts = splitFile(TXT_FILE_PATH_TRIPS);
 
