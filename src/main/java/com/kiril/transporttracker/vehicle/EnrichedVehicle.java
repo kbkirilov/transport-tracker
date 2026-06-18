@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record EnrichedVehicle(
     String line,
-    String routeShortName,
     String routeLongName,
     String tripShortName,
     String stopName,

@@ -62,7 +62,6 @@ function showVehicles(vehicles) {
         $("#vehicles").append(`
             <tr>
                 <td>${v.line ?? ''}</td>
-                <td>${v.routeShortName ?? ''}</td>
                 <td>${v.routeLongName ?? ''}</td>
                 <td>${v.tripShortName ?? ''}</td>
                 <td>${v.stopName ?? ''}</td>

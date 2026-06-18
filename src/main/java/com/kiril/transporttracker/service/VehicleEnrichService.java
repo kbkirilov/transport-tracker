@@ -1,8 +1,5 @@
 package com.kiril.transporttracker.service;
 
-import com.kiril.transporttracker.exceptions.RouteNotFoundException;
-import com.kiril.transporttracker.exceptions.StopNotFoundException;
-import com.kiril.transporttracker.exceptions.TripNotFoundException;
 import com.kiril.transporttracker.gtfs.GtfsRealtimeClient;
 import com.kiril.transporttracker.models.Route;
 import com.kiril.transporttracker.models.Stop;
@@ -28,14 +25,12 @@ public class VehicleEnrichService {
   }
 
   private EnrichedVehicle enrich(RawVehicle rawVehicle) {
-    Route route =
-        cacheService.findRoute(rawVehicle.routeId()).orElseThrow(RouteNotFoundException::new);
-    Stop stop = cacheService.findStop(rawVehicle.stopId()).orElseThrow(StopNotFoundException::new);
-    Trip trip = cacheService.findTrip(rawVehicle.tripId()).orElseThrow(TripNotFoundException::new);
+    Route route = cacheService.findRoute(rawVehicle.routeId()).orElse(Route.unknown());
+    Stop stop = cacheService.findStop(rawVehicle.stopId()).orElse(Stop.unknown());
+    Trip trip = cacheService.findTrip(rawVehicle.tripId()).orElse(Trip.unknown());
 
     return new EnrichedVehicle(
         getVehicleLine(rawVehicle.vehicleId(), route.routeShortName()),
-        route.routeShortName(),
         route.routeLongName(),
         trip.tripShortName(),
         stop.stopName(),

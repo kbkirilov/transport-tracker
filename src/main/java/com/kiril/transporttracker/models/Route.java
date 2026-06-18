@@ -8,4 +8,10 @@ public record Route(
     String agencyId,
     String routeShortName,
     String routeLongName,
-    String routeType) {}
+    String routeType) {
+  public static final String UNKNOWN = "UNKNOWN";
+
+  public static Route unknown() {
+    return new Route(UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN);
+  }
+}
