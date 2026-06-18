@@ -1,6 +1,8 @@
 package com.kiril.transporttracker.service;
 
-import com.github.benmanes.caffeine.cache.Cache;
+import com.kiril.transporttracker.exceptions.RouteNotFoundException;
+import com.kiril.transporttracker.exceptions.StopNotFoundException;
+import com.kiril.transporttracker.exceptions.TripNotFoundException;
 import com.kiril.transporttracker.gtfs.GtfsRealtimeClient;
 import com.kiril.transporttracker.models.Route;
 import com.kiril.transporttracker.models.Stop;
@@ -17,9 +19,7 @@ import org.springframework.stereotype.Service;
 public class VehicleEnrichService {
 
   private final GtfsRealtimeClient gtfsClient;
-  private final Cache<String, Route> routesCache;
-  private final Cache<String, Stop> stopsCache;
-  private final Cache<String, Trip> tripCache;
+  private final CacheService cacheService;
 
   public List<EnrichedVehicle> enrichVehicles() throws Exception {
     List<RawVehicle> rawVehicles = gtfsClient.getVehicles();
@@ -28,20 +28,16 @@ public class VehicleEnrichService {
   }
 
   private EnrichedVehicle enrich(RawVehicle rawVehicle) {
-    Route route = routesCache.getIfPresent(rawVehicle.routeId());
-    Stop stop = stopsCache.getIfPresent(rawVehicle.stopId());
-    Trip trip = tripCache.getIfPresent(rawVehicle.tripId());
-
-    // TODO throw custom exception below
-    if (route == null || stop == null) {
-      throw new RuntimeException("X is null");
-    }
+    Route route =
+        cacheService.findRoute(rawVehicle.routeId()).orElseThrow(RouteNotFoundException::new);
+    Stop stop = cacheService.findStop(rawVehicle.stopId()).orElseThrow(StopNotFoundException::new);
+    Trip trip = cacheService.findTrip(rawVehicle.tripId()).orElseThrow(TripNotFoundException::new);
 
     return new EnrichedVehicle(
         getVehicleLine(rawVehicle.vehicleId(), route.routeShortName()),
         route.routeShortName(),
         route.routeLongName(),
-        trip == null ? "NONE" : trip.tripShortName(),
+        trip.tripShortName(),
         stop.stopName(),
         rawVehicle.latitude(),
         rawVehicle.longitude(),
