@@ -4,4 +4,9 @@ spring:
 
 transport:
   scheduler:
-    polling-rate: 1000
+    polling-rate: 10000
+
+cache:
+  default:
+    time-to-live: 60
+    max-size: 5000
